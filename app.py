@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify, render_template
 import joblib
 
 app = Flask(__name__)
-model = joblib.load('tree.joblib')
+model = joblib.load('svm_grid.joblib')
 flower_dict = {0: 'Setosa', 1: 'Versicolor', 2: 'Virginica'}
 
 
