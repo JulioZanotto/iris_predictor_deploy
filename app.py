@@ -1,39 +1,23 @@
+import streamlit as st
 import numpy as np
-from flask import Flask, request, jsonify, render_template
 import joblib
-import os
 
-app = Flask(__name__)
+# Carrega o modelo
 model = joblib.load('svm_grid.joblib')
 flower_dict = {0: 'Setosa', 1: 'Versicolor', 2: 'Virginica'}
 
+# Cria a interface
+# Título
+st.title("Iris type model classifier")
 
-@app.route('/')
-def home():
-    return render_template('index.html')
+# Criar os boxes para entrada de dados
+f1 = st.number_input("First feature")
+f2 = st.number_input("Second feature")
+f3 = st.number_input("Third feature")
+f4 = st.number_input("Fourth feature")
 
-
-@app.route('/predict', methods=['POST'])
-def predict():
-
-    int_features = [float(x) for x in request.form.values()]
-    final_features = [np.array(int_features)]
-    prediction = model.predict(final_features)
-
-    output = flower_dict[prediction[0]]
-
-    return render_template('index.html', prediction_text='The flower is Iris {}'.format(output))
-
-
-@app.route('/results', methods=['POST'])
-def results():
-
-    data = request.get_json(force=True)
-    prediction = model.predict([np.array(list(data.values()))])
-    output = prediction[0]
-    return jsonify(str(output))
-
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
+final_features = [np.array([f1, f2, f3, f4])]
+prediction = model.predict(final_features)
+output = flower_dict[prediction[0]]
+if st.button('Predict'):
+    st.write("## It is the Iris {}".format(output))
